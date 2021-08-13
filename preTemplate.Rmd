@@ -1,7 +1,7 @@
 ---
 title: "preTemplate"
 subtitle: ""
-author: "苏烨"
+author: ""
 date: "2021/8/12"
 output: 
   bookdown::beamer_presentation2:
