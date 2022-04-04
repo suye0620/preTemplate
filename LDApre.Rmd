@@ -1,0 +1,116 @@
+---
+title: "LDA主题模型"
+subtitle: "原理详解与代码实战"
+author: "苏烨"
+institute: "统计与数学学院"
+date: "`r Sys.Date()`"
+output:
+  bookdown::beamer_presentation2:
+    latex_engine: xelatex
+    theme: "Madrid"
+    colortheme: "beaver"
+    toc: yes
+    slide_level: 3
+    keep_tex: true
+    includes:
+      in_header: 'preamble.tex'
+
+    # citation_package: natbib
+# header-includes:
+#     - \usepackage[UTF8, heading = false, scheme = plain]{ctex}
+    # - \setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,scale = 1.5]{background.jpg}}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,warning = F)
+```
+
+# 写在前面
+
+$\quad$在机器学习领域，关于LDA有两种含义，一是「线性判别分析（Linear Discriminant Analysis）」，是一种经典的降维学习方法；一是我们要讲的「隐含狄利克雷分布（Latent Dirichlet Allocation）」，是一种概率主题模型，主要用来文本分类，在NLP领域有重要应用。
+
+$\quad$LDA主题模型，在PLSA模型的基础上引入了参数的先验分布的概念，能够对文本信息进行语义抽取，为各领域科研人员提供了文本主题挖掘的新途径。目前它已经被广泛应用于文本信息检索、话题检测和跟踪、线上消费者偏好特征研究、错误报告诊断等诸多领域，产生了许多研究成果。
+
+# LDA模型的代码实现
+
+### 目前，我在网上找到的实现方式主要有以下3种(都先用jieba将词分好)：
+
+>1. 使用gensim(Python)里的doc2bow向量化，然后用ldamodel
+>2. 使用sklearn(Python)里的CountVectorizer向量化，然后用LatentDirichletAllocation建模
+>3. R语言lda包进行模型训练，使用LDAvis进行可视化。
+
+(图\@ref(fig:fig1))
+
+
+### LDAvis可视化demo
+```{r fig1, fig.align='center',echo = F,fig.cap="作图样例",out.width="50%",out.height="50%"}
+knitr::include_graphics("pic/LDAdemo.png")
+```
+
+<!-- ![](pic/LDAdemo.png) -->
+
+
+# LDA的数学原理
+
+## pLSA
+
+
+$\quad$LDA是一种典型的词袋模型，它的基本假设是一篇文档是由一组词构成的一个集合，词与词之间没有顺序以及先后关系。一篇文档可以包含多个主题，文档中每一个词都由其中的一个主题生成。
+
+$\quad$经典LDA主题模型的三层贝叶斯模型：
+
+### LDA模型
+
+![Smoothed_LDA](./pic/Smoothed_LDA.jpg)
+
+### LDA模型
+
+$\quad$如上图所示，在LDA模型中一篇文档生成的方式如下：
+
+- 从狄利克雷分布$\alpha$中取样生成文档$i$的主题分布$\theta_i$
+
+- 从主题的多项式分布$\theta_i$中取样生成文档$i$第$j$个词$w_{i,j}$的主题$z_{i,j}$
+
+- 从狄利克雷分布$\beta$中取样生成主题$z_{i,j}$的词语分布$\phi_{z_{i,j}}$
+
+- 从词语的多项式分布$\phi_{z_{i,j}}$中采样最终生成词语$w_{i,j}$
+
+
+$\quad$LDA主题建模的过程，概括来说就是通过给定的训练文本集学习出参数$\alpha$和$\beta$。而参数$\alpha$和$\beta$的估计，可以由EM推断和Gibbs采样算法得到。
+
+## 对比
+
+::: columns
+
+:::: column
+
+My topic for this slide 
+
+\scalebox{0.35}{
+```{r hmisc-table, echo=FALSE, message=FALSE, results='asis'}
+library(Hmisc)
+latex(head(mtcars), file='', table.env=FALSE, center='none')
+```
+}
+
+
+```{r, echo=FALSE, fig.show='hold', fig.height=1, fig.width=2.5}
+library(ggplot2)
+mt <- ggplot(mtcars, aes(mpg)) + geom_density(alpha=.2, fill="#FF6666") +
+theme(axis.title.x = element_text(size=10),axis.text.x  = element_text(size=8),
+axis.title.y = element_text(size=10),axis.text.y  = element_text(size=8))
+mt
+```
+
+::::
+
+:::: column
+
+- Here is some Bullet Text
+- And some more
+    - Subtext
+    - More Subtext
+
+::::
+
+:::
