@@ -1,4 +1,12 @@
+# R env
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+
+# beamer rubbish
+*.aux
+*.log
+*.nav
+*.snm
+*.toc
